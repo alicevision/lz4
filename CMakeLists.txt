@@ -49,6 +49,13 @@ if(MSVC AND BUILD_SHARED_LIBS)
     target_compile_definitions(lz4 PRIVATE LZ4_DLL_EXPORT=1)
 endif()
 
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/lz4ConfigVersion.cmake"
+        VERSION ${LZ4_VERSION_STRING}
+        COMPATIBILITY SameMajorVersion)
+
 install(TARGETS lz4
     EXPORT lz4Config
     RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
@@ -71,6 +78,9 @@ install(EXPORT lz4Config
 
 # Export the package for use from the build-tree (this registers the build-tree with a global CMake-registry)
 export(PACKAGE lz4)
+install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/lz4ConfigVersion.cmake
+        DESTINATION ${INSTALL_CMAKE_DIR})
 
 # Create pkgconfig module file
 file(STRINGS "lib/lz4.h" LZ4_H REGEX "^#define LZ4_VERSION_(MAJOR|MINOR|RELEASE) ")
