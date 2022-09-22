@@ -68,9 +68,9 @@ install(TARGETS lz4
     COMPONENT dev
 )
 
-FILE(GLOB lz4h "${CMAKE_CURRENT_LIST_DIR}/lib/*.h")
+file(GLOB lz4h "${CMAKE_CURRENT_LIST_DIR}/lib/*.h")
 list(REMOVE_ITEM lz4h "${CMAKE_CURRENT_LIST_DIR}/lib/xxhash.h")
-INSTALL(FILES ${lz4h} DESTINATION "${INSTALL_INCLUDE_DIR}")
+install(FILES ${lz4h} DESTINATION "${INSTALL_INCLUDE_DIR}")
 
 install(EXPORT lz4Config
   FILE lz4-config.cmake
