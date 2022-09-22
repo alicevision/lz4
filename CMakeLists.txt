@@ -14,6 +14,8 @@ mark_as_advanced(LZ4_VERSION_STRING LZ4_VERSION_MAJOR LZ4_VERSION_MINOR LZ4_VERS
 
 project(lz4 VERSION ${LZ4_VERSION_STRING} LANGUAGES C)
 
+option(LZ4_EXPORT_PACKAGE "Export the cmake package" OFF)
+option(LZ4_EXPORT_PKGCONFIG "Generate and export the pkg configuration" OFF)
 
 include(GNUInstallDirs)
 set(INSTALL_BIN_DIR      ${CMAKE_INSTALL_BINDIR}             CACHE PATH "Path where exe and dll will be installed")
@@ -76,16 +78,21 @@ install(EXPORT lz4Config
   DESTINATION "${INSTALL_CMAKE_DIR}"
 )
 
-# Export the package for use from the build-tree (this registers the build-tree with a global CMake-registry)
-export(PACKAGE lz4)
 install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/lz4ConfigVersion.cmake
         DESTINATION ${INSTALL_CMAKE_DIR})
 
-# Create pkgconfig module file
-file(STRINGS "lib/lz4.h" LZ4_H REGEX "^#define LZ4_VERSION_(MAJOR|MINOR|RELEASE) ")
-string(REGEX REPLACE "^.*MAJOR +([0-9]+).*MINOR +([0-9]+).*RELEASE +([0-9]+).*$" "\\1.\\2.\\3" VERSION "${LZ4_H}")
-set(INCLUDEDIR [[${prefix}/include]])
-set(LIBDIR [[${prefix}/lib]])
-configure_file(lib/liblz4.pc.in lib/liblz4.pc)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/liblz4.pc" DESTINATION "lib/pkgconfig")
+if(LZ4_EXPORT_PACKAGE)
+    # Export the package for use from the build-tree (this registers the build-tree with a global CMake-registry)
+    export(PACKAGE lz4)
+endif()
+
+if(LZ4_EXPORT_PKGCONFIG)
+    # Create pkgconfig module file
+    file(STRINGS "lib/lz4.h" LZ4_H REGEX "^#define LZ4_VERSION_(MAJOR|MINOR|RELEASE) ")
+    string(REGEX REPLACE "^.*MAJOR +([0-9]+).*MINOR +([0-9]+).*RELEASE +([0-9]+).*$" "\\1.\\2.\\3" VERSION "${LZ4_H}")
+    set(INCLUDEDIR [[${prefix}/include]])
+    set(LIBDIR [[${prefix}/lib]])
+    configure_file(lib/liblz4.pc.in lib/liblz4.pc)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/liblz4.pc" DESTINATION "lib/pkgconfig")
+endif()
