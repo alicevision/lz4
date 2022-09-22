@@ -5,12 +5,6 @@ if(MSVC AND BUILD_SHARED_LIBS)
 endif()
 add_definitions(-DXXH_NAMESPACE=LZ4_)
 
-set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Install prefix")
-set(INSTALL_BIN_DIR      "bin"                       CACHE PATH "Path where exe and dll will be installed")
-set(INSTALL_LIB_DIR      "lib"                       CACHE PATH "Path where lib will be installed")
-set(INSTALL_INCLUDE_DIR  "include"                   CACHE PATH "Path where headers will be installed")
-set(INSTALL_CMAKE_DIR    "share/lz4"                 CACHE PATH "Path where cmake configs will be installed")
-
 file(GLOB LZ4_HEADERS lib/*.h)
 
 add_library(lz4
@@ -35,6 +29,12 @@ mark_as_advanced(LZ4_VERSION_STRING LZ4_VERSION_MAJOR LZ4_VERSION_MINOR LZ4_VERS
 
 project(lz4 VERSION ${LZ4_VERSION_STRING} LANGUAGES C)
 
+
+include(GNUInstallDirs)
+set(INSTALL_BIN_DIR      ${CMAKE_INSTALL_BINDIR}             CACHE PATH "Path where exe and dll will be installed")
+set(INSTALL_LIB_DIR      ${CMAKE_INSTALL_LIBDIR}             CACHE PATH "Path where lib will be installed")
+set(INSTALL_INCLUDE_DIR  ${CMAKE_INSTALL_INCLUDEDIR}         CACHE PATH "Path where headers will be installed")
+set(INSTALL_CMAKE_DIR    "${CMAKE_INSTALL_DATAROOTDIR}/lz4"  CACHE PATH "Path where cmake configs will be installed")
 target_include_directories(lz4 PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/lib> $<INSTALL_INTERFACE:include>)
 set_target_properties(lz4 PROPERTIES PUBLIC_HEADER ${LZ4_HEADERS})
 
