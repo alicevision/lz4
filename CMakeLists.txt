@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-if(MSVC AND BUILD_SHARED_LIBS)
-    add_definitions(-DLZ4_DLL_EXPORT)
-endif()
-add_definitions(-DXXH_NAMESPACE=LZ4_)
-
 set(LZ4_TOP_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Parse version information
@@ -42,7 +37,17 @@ set(LZ4_SOURCES
 add_library(lz4  ${LZ4_HEADERS} ${LZ4_SOURCES})
 
 target_include_directories(lz4 PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/lib> $<INSTALL_INTERFACE:include>)
-set_target_properties(lz4 PROPERTIES PUBLIC_HEADER ${LZ4_HEADERS})
+set_target_properties(lz4 PROPERTIES
+    PUBLIC_HEADER ${LZ4_HEADERS}
+    OUTPUT_NAME lz4
+    SOVERSION "${LZ4_VERSION_MAJOR}"
+    VERSION "${LZ4_VERSION_STRING}")
+
+target_compile_definitions(lz4 PUBLIC XXH_NAMESPACE=LZ4_)
+
+if(MSVC AND BUILD_SHARED_LIBS)
+    target_compile_definitions(lz4 PRIVATE LZ4_DLL_EXPORT=1)
+endif()
 
 install(TARGETS lz4
     EXPORT lz4Config
