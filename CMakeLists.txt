@@ -5,16 +5,6 @@ if(MSVC AND BUILD_SHARED_LIBS)
 endif()
 add_definitions(-DXXH_NAMESPACE=LZ4_)
 
-file(GLOB LZ4_HEADERS lib/*.h)
-
-add_library(lz4
-    ${LZ4_HEADERS}
-    lib/lz4.c
-    lib/lz4frame.c
-    lib/lz4hc.c
-    lib/xxhash.c
-)
-
 set(LZ4_TOP_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Parse version information
@@ -35,6 +25,22 @@ set(INSTALL_BIN_DIR      ${CMAKE_INSTALL_BINDIR}             CACHE PATH "Path wh
 set(INSTALL_LIB_DIR      ${CMAKE_INSTALL_LIBDIR}             CACHE PATH "Path where lib will be installed")
 set(INSTALL_INCLUDE_DIR  ${CMAKE_INSTALL_INCLUDEDIR}         CACHE PATH "Path where headers will be installed")
 set(INSTALL_CMAKE_DIR    "${CMAKE_INSTALL_DATAROOTDIR}/lz4"  CACHE PATH "Path where cmake configs will be installed")
+
+set(LZ4_LIB_SOURCE_DIR "${LZ4_TOP_SOURCE_DIR}/lib")
+
+set(LZ4_HEADERS
+    "${LZ4_LIB_SOURCE_DIR}/lz4.h"
+    "${LZ4_LIB_SOURCE_DIR}/lz4hc.h"
+    "${LZ4_LIB_SOURCE_DIR}/lz4frame.h")
+
+set(LZ4_SOURCES
+    "${LZ4_LIB_SOURCE_DIR}/lz4.c"
+    "${LZ4_LIB_SOURCE_DIR}/lz4hc.c"
+    "${LZ4_LIB_SOURCE_DIR}/lz4frame.c"
+    "${LZ4_LIB_SOURCE_DIR}/xxhash.c")
+
+add_library(lz4  ${LZ4_HEADERS} ${LZ4_SOURCES})
+
 target_include_directories(lz4 PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/lib> $<INSTALL_INTERFACE:include>)
 set_target_properties(lz4 PROPERTIES PUBLIC_HEADER ${LZ4_HEADERS})
 
